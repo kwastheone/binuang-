@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagsasalin Reviewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .nav-link.active {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+        }
+
+        .topic-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .flip-card {
+            perspective: 1000px;
+            height: 220px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .flip-card-back {
+            background-color: #eff6ff;
+            color: #1e40af;
+            transform: rotateY(180deg);
+        }
+
+        .quiz-option:hover {
+            background-color: #f1f5f9;
+        }
+
+        .hidden { display: none; }
+
+        .translation-sub {
+            font-style: italic;
+            font-size: 0.75rem;
+            opacity: 0.8;
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <header class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <h1 class="text-xl font-bold text-blue-600 flex items-center gap-2">
+                <i class="fa-solid fa-language"></i> Pagsasalin Reviewer
+            </h1>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-600">
+                <button onclick="showSection('home')" class="nav-link active py-5 text-center">Home<br><span class="translation-sub">Tahanan</span></button>
+                <button onclick="showSection('concepts')" class="nav-link py-5 text-center">Konsepto<br><span class="translation-sub">Concepts</span></button>
+                <button onclick="showSection('principles')" class="nav-link py-5 text-center">Aralin<br><span class="translation-sub">Lesson</span></button>
+                <button onclick="showSection('quiz')" class="nav-link py-5 text-center">Pagsusulit<br><span class="translation-sub">Quiz</span></button>
+            </nav>
+            <button class="md:hidden text-gray-600" onclick="toggleMobileMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 mt-8">
+        <div class="mb-8 bg-white border rounded-2xl p-4 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <p class="text-sm font-bold text-gray-700">Pumili ng Reviewer</p>
+                    <p class="translation-sub">Choose a topic page</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button id="basic-topic-btn" onclick="switchTopic('basic')" class="topic-btn active border px-4 py-2 rounded-lg font-semibold text-sm transition">
+                        Batayang Kaalaman
+                    </button>
+                    <button id="approaches-topic-btn" onclick="switchTopic('approaches')" class="topic-btn border px-4 py-2 rounded-lg font-semibold text-sm transition">
+                        Aralin 11.3: Mga Lapit
+                    </button>
+                    <button id="practice-topic-btn" onclick="switchTopic('practice')" class="topic-btn border px-4 py-2 rounded-lg font-semibold text-sm transition">
+                        Panimulang Pagsasanay
+                    </button>
+                    <button id="process-topic-btn" onclick="switchTopic('process')" class="topic-btn border px-4 py-2 rounded-lg font-semibold text-sm transition">
+                        Proseso ng Pagsasalin
+                    </button>
+                    <button id="principlesTopic-topic-btn" onclick="switchTopic('principlesTopic')" class="topic-btn border px-4 py-2 rounded-lg font-semibold text-sm transition">
+                        Mga Simulain
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="basic-topic" class="topic-page">
+            <section data-section="home" class="topic-section space-y-8">
+                <div class="bg-blue-600 rounded-2xl p-8 text-white shadow-xl">
+                    <h2 class="text-3xl font-bold mb-2">Batayang Kaalaman sa Pagsasalin</h2>
+                    <p class="italic text-xs opacity-80 mb-2">Basic Knowledge in Translation</p>
+                    <p class="text-blue-100 max-w-2xl">Maging bihasa sa sining at agham ng paglilipat ng diwa mula sa isang wika patungo sa isa pa. Alamin ang mga simulain, katangian, at hakbang.</p>
+                    <div class="mt-6 flex flex-wrap gap-4">
+                        <button onclick="showSection('concepts')" class="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-blue-50 transition">
+                            Magsimula <br><span class="text-[10px] italic">Get Started</span>
+                        </button>
+                        <button onclick="showSection('quiz')" class="bg-blue-500 text-white border border-blue-400 px-6 py-2 rounded-lg font-semibold hover:bg-blue-400 transition">
+                            Mag-Quiz <br><span class="text-[10px] italic">Take Quiz</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 text-xl">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Ano ang Pagsasalin?</h3>
+                        <p class="translation-sub mb-2">What is Translation?</p>
+                        <p class="text-gray-600 text-sm">Ang paglilipat ng pinakamalapit na natural na katumbas ng orihinal na mensahe.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-4 text-xl">
+                            <i class="fa-solid fa-user-pen"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Ang Tagasalin</h3>
+                        <p class="translation-sub mb-2">The Translator</p>
+                        <p class="text-gray-600 text-sm">Kinakailangan ng sapat na kaalaman sa dalawang wika, gramatika, at kultura.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-4 text-xl">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">4 Lebel ng Salin</h3>
+                        <p class="translation-sub mb-2">4 Levels of Translation</p>
+                        <p class="text-gray-600 text-sm">Tekstuwal, Reperensyal, Kohesiyon, at Natural na lebel ng pagsasalin.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="concepts" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Mga Pangunahing Konsepto</h2>
+                    <span class="translation-sub pb-1">Key Concepts</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border">
+                                <span class="font-bold text-gray-700 text-lg">Simulaing Wika</span>
+                                <span class="translation-sub">Source Language (SL)</span>
+                            </div>
+                            <div class="flip-card-back">
+                                <p>Ito ang wika ng orihinal na tekstong isasalin.</p>
+                                <span class="translation-sub mt-2">The language of the original text to be translated.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border">
+                                <span class="font-bold text-gray-700 text-lg">Tunguhing Wika</span>
+                                <span class="translation-sub">Target Language (TL)</span>
+                            </div>
+                            <div class="flip-card-back">
+                                <p>Ang wikang pinagsasalinan ng teksto.</p>
+                                <span class="translation-sub mt-2">The language into which the text is being translated.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border">
+                                <span class="font-bold text-gray-700 text-lg">Eugene Nida</span>
+                                <span class="translation-sub">Dynamic Equivalence</span>
+                            </div>
+                            <div class="flip-card-back">
+                                <p>Binigyang diin ang "pinakamalapit na natural na katumbas" batay sa kahulugan at estilo.</p>
+                                <span class="translation-sub mt-2">Emphasized closest natural equivalent based on meaning and style.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 bg-white p-8 rounded-xl shadow-sm border">
+                    <h3 class="text-xl font-bold border-b pb-2">Mga Katangian ng Tagasalin</h3>
+                    <p class="translation-sub mb-4">Characteristics of a Translator</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-green-500 mt-1"></i><div><span><strong>Kaalaman sa dalawang wika:</strong> Masteri sa SL at TL.</span><span class="translation-sub">Proficiency in both SL and TL.</span></div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-green-500 mt-1"></i><div><span><strong>Kaalaman sa Gramatika:</strong> Estruktura ng dalawang wika.</span><span class="translation-sub">Knowledge of grammar and structure of both languages.</span></div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-green-500 mt-1"></i><div><span><strong>Kaalaman sa Paksa:</strong> Pag-intindi sa nilalaman.</span><span class="translation-sub">Sufficient knowledge of the subject matter.</span></div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-green-500 mt-1"></i><div><span><strong>Kaalaman sa Kultura:</strong> Pinagmulan at konteksto.</span><span class="translation-sub">Knowledge of the cultures associated with both languages.</span></div></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section data-section="principles" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Mga Simulain at Hakbang</h2>
+                    <span class="translation-sub pb-1">Principles and Steps</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-blue-100">
+                        <h3 class="font-bold text-blue-700 flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> Mahalagang Tandaan</h3>
+                        <p class="translation-sub mb-4">Important to Remember</p>
+                        <div class="space-y-4 text-sm text-gray-700">
+                            <div class="p-3 bg-blue-50 rounded-lg"><strong>Kultura (Culture):</strong> Ang wika ay nakaugat dito.<br><span class="text-xs italic opacity-75">Language is rooted in culture.</span></div>
+                            <div class="p-3 bg-blue-50 rounded-lg"><strong>Konteksto (Context):</strong> Ang salita ay may kahulugan lang pag nasa pangungusap na.<br><span class="text-xs italic opacity-75">Words gain specific meaning within a phrase or sentence.</span></div>
+                            <div class="p-3 bg-blue-50 rounded-lg"><strong>Unibersal na Termino (Universal Terms):</strong> Hindi na isinasalin ang H2O o DepEd.<br><span class="text-xs italic opacity-75">Established acronyms and formulas are not translated.</span></div>
+                            <div class="p-3 bg-blue-50 rounded-lg"><strong>Pagtitipid (Brevity):</strong> Iwasan ang maligoy na salita.<br><span class="text-xs italic opacity-75">Always keep economy of words in mind.</span></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-orange-100">
+                        <h3 class="font-bold text-orange-700 flex items-center gap-2"><i class="fa-solid fa-stairs"></i> Hakbang sa Pagsasalin</h3>
+                        <p class="translation-sub mb-4">Steps in Translation</p>
+                        <ol class="space-y-3">
+                            <li class="flex flex-col"><div class="flex items-center gap-2"><span class="w-6 h-6 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs font-bold">1</span>Panimulang Pagsusuri</div><span class="translation-sub ml-8">Preliminary Analysis</span></li>
+                            <li class="flex flex-col"><div class="flex items-center gap-2"><span class="w-6 h-6 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs font-bold">2</span>Pagsusuri sa Nilalaman at Estilo</div><span class="translation-sub ml-8">Detailed Content and Style Analysis</span></li>
+                            <li class="flex flex-col"><div class="flex items-center gap-2"><span class="w-6 h-6 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs font-bold">3</span>Pamilyarisasyon sa Teksto</div><span class="translation-sub ml-8">Familiarization with the Text</span></li>
+                            <li class="flex flex-col"><div class="flex items-center gap-2"><span class="w-6 h-6 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs font-bold">4</span>Muling Pormulasyon</div><span class="translation-sub ml-8">Reformulation of the Text</span></li>
+                            <li class="flex flex-col"><div class="flex items-center gap-2"><span class="w-6 h-6 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs font-bold">5</span>Pagsusuri ng Salin</div><span class="translation-sub ml-8">Evaluation of the Translation</span></li>
+                            <li class="flex flex-col"><div class="flex items-center gap-2"><span class="w-6 h-6 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center text-xs font-bold">6</span>Pagrerepaso at Paghahambing</div><span class="translation-sub ml-8">Revision and Comparison</span></li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="quiz" class="topic-section hidden max-w-2xl mx-auto">
+                <div data-quiz-container class="bg-white p-8 rounded-2xl shadow-lg border">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col">
+                            <span data-quiz-progress class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tanong 1/5</span>
+                            <span class="translation-sub">Question</span>
+                        </div>
+                        <span data-quiz-score class="text-blue-600 font-bold">Score: 0</span>
+                    </div>
+                    <h3 data-quiz-question class="text-xl font-bold text-gray-800 mb-6 leading-tight"></h3>
+                    <div data-quiz-options class="space-y-3"></div>
+                    <div data-quiz-feedback class="mt-6 p-4 rounded-lg hidden"></div>
+                    <button onclick="nextQuestion()" data-next-btn class="mt-8 w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition hidden">
+                        Susunod na Tanong <br><span class="text-[10px] font-normal italic">Next Question</span>
+                    </button>
+                </div>
+                <div data-result-container class="bg-white p-12 rounded-2xl shadow-lg border text-center hidden">
+                    <div class="text-6xl mb-4 text-amber-400"><i class="fa-solid fa-trophy"></i></div>
+                    <h2 class="text-3xl font-bold mb-2">Tapos na!</h2>
+                    <p class="translation-sub text-base mb-2">Finished!</p>
+                    <p data-final-score class="text-xl text-gray-600 mb-8"></p>
+                    <button onclick="resetQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                        Ulitin ang Pagsusulit <br><span class="text-[10px] font-normal italic">Restart Quiz</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div id="approaches-topic" class="topic-page hidden">
+            <section data-section="home" class="topic-section space-y-8">
+                <div class="bg-indigo-600 rounded-2xl p-8 text-white shadow-xl">
+                    <h2 class="text-3xl font-bold mb-2">Aralin 11.3: Mga Lapit sa Pagsasalin</h2>
+                    <p class="italic text-xs opacity-80 mb-2">Approaches to Translation</p>
+                    <p class="text-indigo-100 max-w-2xl">Balikan ang mahahalagang konsepto, uri ng tekstong isinasalin, estratehiya ni Mona Baker, metodo ni Newmark, panghihiram, at tuntunin sa mahusay na salin.</p>
+                    <div class="mt-6 flex flex-wrap gap-4">
+                        <button onclick="showSection('concepts')" class="bg-white text-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-indigo-50 transition">
+                            Magsimula <br><span class="text-[10px] italic">Get Started</span>
+                        </button>
+                        <button onclick="showSection('quiz')" class="bg-indigo-500 text-white border border-indigo-400 px-6 py-2 rounded-lg font-semibold hover:bg-indigo-400 transition">
+                            Mag-Quiz <br><span class="text-[10px] italic">Take Quiz</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-earth-americas"></i></div>
+                        <h3 class="font-bold text-lg">Kahalagahan</h3>
+                        <p class="translation-sub mb-2">Importance</p>
+                        <p class="text-gray-600 text-sm">Ayon kay Italo Calvino, ang tagasalin ang nagpapakilala sa manunulat sa buong mundo.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-briefcase"></i></div>
+                        <h3 class="font-bold text-lg">Uri ng Teksto</h3>
+                        <p class="translation-sub mb-2">Types of Text</p>
+                        <p class="text-gray-600 text-sm">May teknikal na pagsasalin at pagsasaling pampanitikan.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-route"></i></div>
+                        <h3 class="font-bold text-lg">Metodo at Estratehiya</h3>
+                        <p class="translation-sub mb-2">Methods and Strategies</p>
+                        <p class="text-gray-600 text-sm">Tinutukoy kung kailan susunod sa SL at kailan iaangkop sa TL.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="concepts" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Mga Pangunahing Konsepto</h2>
+                    <span class="translation-sub pb-1">Key Concepts</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Italo Calvino</span><span class="translation-sub">Translator as ally</span></div>
+                            <div class="flip-card-back"><p>Ang tagasalin ang tumutulong ipakilala ang manunulat sa ibang bansa at kultura.</p><span class="translation-sub mt-2">The translator helps literature cross borders.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Newmark</span><span class="translation-sub">Definition</span></div>
+                            <div class="flip-card-back"><p>Pagtatangkang ilipat ang mensahe sa ibang wika habang nananatili ang orihinal na kahulugan.</p><span class="translation-sub mt-2">Transfer the message while preserving meaning.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Monosemic</span><span class="translation-sub">One meaning</span></div>
+                            <div class="flip-card-back"><p>Karaniwang katangian ng teknikal na termino: iisa at tiyak ang kahulugan.</p><span class="translation-sub mt-2">Technical terms often have one fixed meaning.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">SL at TL</span><span class="translation-sub">Source and Target</span></div>
+                            <div class="flip-card-back"><p>Ang ilang metodo ay nakatuon sa simulaing lenggwahe, habang ang iba ay nakatuon sa tunguhang lenggwahe.</p><span class="translation-sub mt-2">Methods may favor source or target language.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Panghihiram</span><span class="translation-sub">Borrowing</span></div>
+                            <div class="flip-card-back"><p>Maaaring baguhin ang baybay, panatilihin ang orihinal, o lumikha ng bagong salita.</p><span class="translation-sub mt-2">Borrowed forms may be adapted, retained, or coined.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Natural na Daloy</span><span class="translation-sub">Natural flow</span></div>
+                            <div class="flip-card-back"><p>Ang mabuting salin ay malinaw, madulas, at natural sa sariling wika.</p><span class="translation-sub mt-2">A good translation reads smoothly in the target language.</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <h3 class="text-xl font-bold border-b pb-2">Dalawang Uri ng Tekstong Isinasalin</h3>
+                    <p class="translation-sub mb-4">Two Types of Translated Texts</p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                            <h4 class="font-bold text-emerald-700">Teknikal na Pagsasalin</h4>
+                            <p class="text-sm text-gray-700 mt-2">Tuwiran, tiyak, espesyalisado, at eksakto. Karaniwang monosemic ang mga terminolohiya at madalas gumamit ng hiram na salita.</p>
+                        </div>
+                        <div class="p-4 bg-rose-50 rounded-lg border border-rose-100">
+                            <h4 class="font-bold text-rose-700">Pagsasaling Pampanitikan</h4>
+                            <p class="text-sm text-gray-700 mt-2">Masining at malikhain. Mas binibigyang-diin ang estetika, damdamin, himig, at dating ng akda.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="principles" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Estratehiya, Metodo, at Tuntunin</h2>
+                    <span class="translation-sub pb-1">Strategies, Methods, and Rules</span>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-indigo-100">
+                    <h3 class="font-bold text-indigo-700 flex items-center gap-2"><i class="fa-solid fa-table-list"></i> Estratehiya ng mga Propesyonal</h3>
+                    <p class="translation-sub mb-4">Mona Baker's strategies</p>
+                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>General Word:</strong> Gumamit ng mas pangkalahatang salita.</div>
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>Neutral Word:</strong> Pumili ng salitang walang mabigat na emosyon.</div>
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>Cultural Substitution:</strong> Palitan ng katumbas na may kaparehong dating sa kultura.</div>
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>Loan Word + Explanation:</strong> Manghiram at magpaliwanag sa unang gamit.</div>
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>Paraphrase Related:</strong> Ipaliwanag gamit ang kaugnay na salita.</div>
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>Paraphrase Unrelated:</strong> Ipaliwanag gamit ang ibang salitang walang direktang kaugnayan.</div>
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>Omission:</strong> Alisin ang bahaging hindi makakasira sa mensahe.</div>
+                        <div class="p-3 bg-indigo-50 rounded-lg"><strong>Illustration:</strong> Gumamit ng larawan o deskripsyon kapag walang katumbas.</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-sky-100">
+                        <h3 class="font-bold text-sky-700 flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Diin sa Simulaing Lenggwahe</h3>
+                        <p class="translation-sub mb-4">Source Language focused</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="p-3 bg-sky-50 rounded-lg"><strong>Salita-sa-Salita:</strong> Bawat salita ang tinitingnan; madalas hindi natural.</div>
+                            <div class="p-3 bg-sky-50 rounded-lg"><strong>Literal:</strong> Sinusunod ang estruktura ng SL at primaryang kahulugan.</div>
+                            <div class="p-3 bg-sky-50 rounded-lg"><strong>Matapat:</strong> Eksaktong kahulugan habang sumusunod sa gramatika ng SL.</div>
+                            <div class="p-3 bg-sky-50 rounded-lg"><strong>Semantiko:</strong> Pinapahalagahan ang estetiko at sining ng orihinal.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-orange-100">
+                        <h3 class="font-bold text-orange-700 flex items-center gap-2"><i class="fa-solid fa-arrow-right"></i> Diin sa Tunguhang Lenggwahe</h3>
+                        <p class="translation-sub mb-4">Target Language focused</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="p-3 bg-orange-50 rounded-lg"><strong>Adaptasyon:</strong> Pinakamalaya; karaniwan sa awit, tula, at dula.</div>
+                            <div class="p-3 bg-orange-50 rounded-lg"><strong>Malaya:</strong> Kahulugan ang diin; maaaring magdagdag o magbawas.</div>
+                            <div class="p-3 bg-orange-50 rounded-lg"><strong>Idyomatiko:</strong> Madulas at natural gamit ang idyoma ng TL.</div>
+                            <div class="p-3 bg-orange-50 rounded-lg"><strong>Komunikatibo:</strong> Eksaktong mensahe sa paraang madaling maunawaan.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-emerald-100">
+                        <h3 class="font-bold text-emerald-700 flex items-center gap-2"><i class="fa-solid fa-handshake"></i> Paraan ng Panghihiram</h3>
+                        <p class="translation-sub mb-4">Borrowing methods</p>
+                        <ul class="space-y-3 text-sm text-gray-700">
+                            <li><strong>Kastila, binago ang baybay:</strong> cocina -> kusina.</li>
+                            <li><strong>Ingles, binago ang baybay:</strong> abstract -> abstrak.</li>
+                            <li><strong>Ingles, orihinal na baybay:</strong> cake, jogging, cute.</li>
+                            <li><strong>Ibang dayuhang wika:</strong> spaghetti, pizza, bon appetit.</li>
+                            <li><strong>Pa-idyomatiko:</strong> bread and butter -> hanapbuhay.</li>
+                            <li><strong>Nilikha:</strong> tapsilog, satulawit.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-rose-100">
+                        <h3 class="font-bold text-rose-700 flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Mahahalagang Tuntunin</h3>
+                        <p class="translation-sub mb-4">Important rules</p>
+                        <ul class="space-y-3 text-sm text-gray-700">
+                            <li>Basahin nang paulit-ulit ang akda bago simulan.</li>
+                            <li>Iwasan ang literal o salita-sa-salitang pagsasalin maliban kung iyon ang layunin.</li>
+                            <li>Siguraduhing madulas, malinaw, at natural ang daloy sa sariling wika.</li>
+                            <li>Palaging ikumpara ang salin sa orihinal upang hindi mawala ang mensahe.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="quiz" class="topic-section hidden max-w-2xl mx-auto">
+                <div data-quiz-container class="bg-white p-8 rounded-2xl shadow-lg border">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col">
+                            <span data-quiz-progress class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tanong 1/5</span>
+                            <span class="translation-sub">Question</span>
+                        </div>
+                        <span data-quiz-score class="text-blue-600 font-bold">Score: 0</span>
+                    </div>
+                    <h3 data-quiz-question class="text-xl font-bold text-gray-800 mb-6 leading-tight"></h3>
+                    <div data-quiz-options class="space-y-3"></div>
+                    <div data-quiz-feedback class="mt-6 p-4 rounded-lg hidden"></div>
+                    <button onclick="nextQuestion()" data-next-btn class="mt-8 w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition hidden">
+                        Susunod na Tanong <br><span class="text-[10px] font-normal italic">Next Question</span>
+                    </button>
+                </div>
+                <div data-result-container class="bg-white p-12 rounded-2xl shadow-lg border text-center hidden">
+                    <div class="text-6xl mb-4 text-amber-400"><i class="fa-solid fa-trophy"></i></div>
+                    <h2 class="text-3xl font-bold mb-2">Tapos na!</h2>
+                    <p class="translation-sub text-base mb-2">Finished!</p>
+                    <p data-final-score class="text-xl text-gray-600 mb-8"></p>
+                    <button onclick="resetQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                        Ulitin ang Pagsusulit <br><span class="text-[10px] font-normal italic">Restart Quiz</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div id="practice-topic" class="topic-page hidden">
+            <section data-section="home" class="topic-section space-y-8">
+                <div class="bg-teal-600 rounded-2xl p-8 text-white shadow-xl">
+                    <h2 class="text-3xl font-bold mb-2">Panimulang Pagsasanay sa Pagsasalin</h2>
+                    <p class="italic text-xs opacity-80 mb-2">Introductory Practice in Translation</p>
+                    <p class="text-teal-100 max-w-2xl">Pag-aralan ang layunin ng pagsasalin, dalawang uri nito, mga pamamaraang siyentipiko at teknikal, at mga terminolohiyang dapat kabisaduhin.</p>
+                    <div class="mt-6 flex flex-wrap gap-4">
+                        <button onclick="showSection('concepts')" class="bg-white text-teal-600 px-6 py-2 rounded-lg font-semibold hover:bg-teal-50 transition">
+                            Magsimula <br><span class="text-[10px] italic">Get Started</span>
+                        </button>
+                        <button onclick="showSection('quiz')" class="bg-teal-500 text-white border border-teal-400 px-6 py-2 rounded-lg font-semibold hover:bg-teal-400 transition">
+                            Mag-Quiz <br><span class="text-[10px] italic">Take Quiz</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-comments"></i></div>
+                        <h3 class="font-bold text-lg">Komunikasyon</h3>
+                        <p class="translation-sub mb-2">Communication</p>
+                        <p class="text-gray-600 text-sm">Pangunahing layon ang mabisang pagpapahatid ng mensahe sa mambabasa.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-cyan-100 text-cyan-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-flask"></i></div>
+                        <h3 class="font-bold text-lg">Teknikal na Salin</h3>
+                        <p class="translation-sub mb-2">Technical Translation</p>
+                        <p class="text-gray-600 text-sm">Nakatuon sa impormatibong teksto at espesyalisadong wika.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-language"></i></div>
+                        <h3 class="font-bold text-lg">Intelektwalisasyon</h3>
+                        <p class="translation-sub mb-2">Intellectualization</p>
+                        <p class="text-gray-600 text-sm">Pagpapayaman sa Filipino sa pamamagitan ng mga terminolohiya sa iba't ibang disiplina.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="concepts" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Mga Layunin at Uri</h2>
+                    <span class="translation-sub pb-1">Goals and Types</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Komunikasyon</span><span class="translation-sub">Main goal</span></div>
+                            <div class="flip-card-back"><p>Ang pangunahing layon ng pagsasalin ay mabisang maihatid ang mensahe.</p><span class="translation-sub mt-2">Translation exists to communicate clearly.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Pagbabahagi</span><span class="translation-sub">Information sharing</span></div>
+                            <div class="flip-card-back"><p>Ginagawang abot ng mas nakararami ang tekstong nasa Simulaang Lenggwahe o Ingles.</p><span class="translation-sub mt-2">Translation opens access to information.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Intelektwalisasyon</span><span class="translation-sub">Filipino enrichment</span></div>
+                            <div class="flip-card-back"><p>Pinayayaman ang Filipino sa pamamagitan ng pagbuo ng terminolohiya sa iba't ibang disiplina.</p><span class="translation-sub mt-2">Filipino becomes richer across fields.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Pampanitikan</span><span class="translation-sub">Literary</span></div>
+                            <div class="flip-card-back"><p>Muling pagsulat ng malikhaing akda tulad ng tula, dula, nobela, maikling kuwento, at sanaysay.</p><span class="translation-sub mt-2">Creative texts are rewritten in another language.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Siyentipiko/Teknikal</span><span class="translation-sub">Scientific/Technical</span></div>
+                            <div class="flip-card-back"><p>Paglilipat ng impormatibong tekstong gumagamit ng espesyalisadong wika.</p><span class="translation-sub mt-2">Used for news, law, medicine, academics, and science.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Konteksto</span><span class="translation-sub">Context</span></div>
+                            <div class="flip-card-back"><p>Gamitin ang saling-taal o saling-tapat kapag may katumbas sa kultura ng Pilipino.</p><span class="translation-sub mt-2">Choose culturally familiar terms when possible.</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <h3 class="text-xl font-bold border-b pb-2">Dalawang Pangkalahatang Uri</h3>
+                    <p class="translation-sub mb-4">Two General Types</p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-amber-50 rounded-lg border border-amber-100">
+                            <h4 class="font-bold text-amber-700">Pagsasaling Pampanitikan</h4>
+                            <p class="text-sm text-gray-700 mt-2">Para sa mga malikhaing akda: tula, dula, nobela, maikling kuwento, at sanaysay.</p>
+                        </div>
+                        <div class="p-4 bg-cyan-50 rounded-lg border border-cyan-100">
+                            <h4 class="font-bold text-cyan-700">Pagsasaling Siyentipiko/Teknikal</h4>
+                            <p class="text-sm text-gray-700 mt-2">Para sa impormatibong teksto: balita, agham panlipunan, batas, medisina, at akademiko.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="principles" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Pamamaraan, Talasalitaan, at Tips</h2>
+                    <span class="translation-sub pb-1">Methods, Terms, and Tips</span>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-teal-100">
+                    <h3 class="font-bold text-teal-700 flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench"></i> Pamamaraan sa Siyentipiko at Teknikal</h3>
+                    <p class="translation-sub mb-4">Ayon kina Enriquez at Marcelino</p>
+                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-angkat:</strong> Direktang paggamit ng salita. Hal. Persepsyon, Amnesya.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-paimbabaw:</strong> Orihinal na teknikal na kahulugan, binago ang baybay. Hal. Reimporsment.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-panggramatika:</strong> Inaayos ang parirala ayon sa gramatika ng Filipino. Hal. interaksyong sosyal.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-hiram:</strong> Katumbas o bagong salita batay sa literal na kahulugan. Hal. paghuhugas-isip.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-likha:</strong> Pag-imbento ng bagong salita na sensitibo at pino.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-daglat:</strong> Akronim o pinaikling salita. Hal. IQ, S-R.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-tapat:</strong> Katutubong katumbas na akma sa kultura. Hal. pakikisalamuha.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg"><strong>Saling-taal:</strong> Pagtuon sa konseptong likas sa lipunang Pilipino.</div>
+                        <div class="p-3 bg-teal-50 rounded-lg md:col-span-2"><strong>Saling-sanib:</strong> Panghihiram mula sa katutubong wika sa Pilipinas. Hal. mahay mula Cebuano.</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-lime-100">
+                        <h3 class="font-bold text-lime-700 flex items-center gap-2"><i class="fa-solid fa-dna"></i> Larangan ng Agham</h3>
+                        <p class="translation-sub mb-4">Biology terms</p>
+                        <ul class="space-y-3 text-sm text-gray-700">
+                            <li><strong>Haynayan:</strong> Biology</li>
+                            <li><strong>Mikhaynayan:</strong> Microbiology</li>
+                            <li><strong>Mulatling Haynayan:</strong> Molecular Biology</li>
+                            <li><strong>Sihay:</strong> Cell</li>
+                            <li><strong>Kagaw:</strong> Germ</li>
+                            <li><strong>Kaphay:</strong> Plasma</li>
+                            <li><strong>Muntilipay:</strong> Platelet</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-red-100">
+                        <h3 class="font-bold text-red-700 flex items-center gap-2"><i class="fa-solid fa-stethoscope"></i> Larangan ng Medisina</h3>
+                        <p class="translation-sub mb-4">Specialists and diseases</p>
+                        <ul class="space-y-3 text-sm text-gray-700">
+                            <li><strong>Palapuso:</strong> Cardiologist</li>
+                            <li><strong>Palabaga:</strong> Pulmonologist</li>
+                            <li><strong>Paladiglap:</strong> Radiologist</li>
+                            <li><strong>Iti / Daragis / Balaod:</strong> Tuberculosis</li>
+                            <li><strong>Sukduldiin / Altapresyon:</strong> Hypertension</li>
+                            <li><strong>Mangansumpong:</strong> Arthritis</li>
+                            <li><strong>Piyo:</strong> Gout</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-amber-100">
+                    <h3 class="font-bold text-amber-700 flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Tips sa Pagsasalin</h3>
+                    <p class="translation-sub mb-4">Translation tips</p>
+                    <div class="grid md:grid-cols-3 gap-3 text-sm text-gray-700">
+                        <div class="p-3 bg-amber-50 rounded-lg"><strong>Layunin muna:</strong> Tukuyin kung teknikal o pampanitikan ang teksto.</div>
+                        <div class="p-3 bg-amber-50 rounded-lg"><strong>Kalinawan:</strong> Sa teknikal na salin, mas mahalaga ang pagkaunawa kaysa ganda ng salita.</div>
+                        <div class="p-3 bg-amber-50 rounded-lg"><strong>Konteksto:</strong> Gumamit ng saling-taal o saling-tapat kapag may katumbas sa kultura.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="quiz" class="topic-section hidden max-w-2xl mx-auto">
+                <div data-quiz-container class="bg-white p-8 rounded-2xl shadow-lg border">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col">
+                            <span data-quiz-progress class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tanong 1/5</span>
+                            <span class="translation-sub">Question</span>
+                        </div>
+                        <span data-quiz-score class="text-blue-600 font-bold">Score: 0</span>
+                    </div>
+                    <h3 data-quiz-question class="text-xl font-bold text-gray-800 mb-6 leading-tight"></h3>
+                    <div data-quiz-options class="space-y-3"></div>
+                    <div data-quiz-feedback class="mt-6 p-4 rounded-lg hidden"></div>
+                    <button onclick="nextQuestion()" data-next-btn class="mt-8 w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition hidden">
+                        Susunod na Tanong <br><span class="text-[10px] font-normal italic">Next Question</span>
+                    </button>
+                </div>
+                <div data-result-container class="bg-white p-12 rounded-2xl shadow-lg border text-center hidden">
+                    <div class="text-6xl mb-4 text-amber-400"><i class="fa-solid fa-trophy"></i></div>
+                    <h2 class="text-3xl font-bold mb-2">Tapos na!</h2>
+                    <p class="translation-sub text-base mb-2">Finished!</p>
+                    <p data-final-score class="text-xl text-gray-600 mb-8"></p>
+                    <button onclick="resetQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                        Ulitin ang Pagsusulit <br><span class="text-[10px] font-normal italic">Restart Quiz</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div id="process-topic" class="topic-page hidden">
+            <section data-section="home" class="topic-section space-y-8">
+                <div class="bg-slate-700 rounded-2xl p-8 text-white shadow-xl">
+                    <h2 class="text-3xl font-bold mb-2">Proseso ng Pagsasalin</h2>
+                    <p class="italic text-xs opacity-80 mb-2">Translation Process</p>
+                    <p class="text-slate-100 max-w-2xl">Unawain ang mga hamon sa pagsasalin, tatlong pangunahing hakbang sa aktuwal na pagsasalin, apat na yugto ng gawain, at gabay sa idyoma at konteksto.</p>
+                    <div class="mt-6 flex flex-wrap gap-4">
+                        <button onclick="showSection('concepts')" class="bg-white text-slate-700 px-6 py-2 rounded-lg font-semibold hover:bg-slate-50 transition">
+                            Magsimula <br><span class="text-[10px] italic">Get Started</span>
+                        </button>
+                        <button onclick="showSection('quiz')" class="bg-slate-600 text-white border border-slate-500 px-6 py-2 rounded-lg font-semibold hover:bg-slate-500 transition">
+                            Mag-Quiz <br><span class="text-[10px] italic">Take Quiz</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <h3 class="font-bold text-lg">Pagtutumbas</h3>
+                        <p class="translation-sub mb-2">Finding equivalents</p>
+                        <p class="text-gray-600 text-sm">Unang hakbang bago manghiram upang maiwasan ang labis na panghihiram.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-handshake-angle"></i></div>
+                        <h3 class="font-bold text-lg">Panghihiram</h3>
+                        <p class="translation-sub mb-2">Borrowing</p>
+                        <p class="text-gray-600 text-sm">Ginagawa kapag walang mahanap na katutubong tumbas.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-violet-100 text-violet-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <h3 class="font-bold text-lg">Paglikha</h3>
+                        <p class="translation-sub mb-2">Creation</p>
+                        <p class="text-gray-600 text-sm">Pagpapayaman sa bokabularyo sa pamamagitan ng bagong pagbuo, hiram-salin, at bagonghulog.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="concepts" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Mga Hamon at Pangunahing Hakbang</h2>
+                    <span class="translation-sub pb-1">Challenges and Main Steps</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Almario 2016</span><span class="translation-sub">Translation challenge</span></div>
+                            <div class="flip-card-back"><p>Hindi simpleng pagpapalit ng salita ang pagsasalin; paghahanap ito ng pinakaangkop na pantumbas.</p><span class="translation-sub mt-2">Translation requires the best fitting equivalent.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Subjective Element</span><span class="translation-sub">Translator influence</span></div>
+                            <div class="flip-card-back"><p>Naiimpluwensyahan ang salin ng mood, paboritong salita, at kaalamang pangwika ng tagasalin.</p><span class="translation-sub mt-2">The translator's choices shape the result.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Pagtutumbas</span><span class="translation-sub">Before borrowing</span></div>
+                            <div class="flip-card-back"><p>Hanapin muna sa Filipino at sa ibang katutubong wika bago manghiram.</p><span class="translation-sub mt-2">Look for local equivalents first.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Panghihiram</span><span class="translation-sub">When needed</span></div>
+                            <div class="flip-card-back"><p>Gamitin kapag walang katutubong tumbas; prayoridad ang Español, kasunod ang Ingles.</p><span class="translation-sub mt-2">Borrow when no native equivalent fits.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Paglikha</span><span class="translation-sub">Word creation</span></div>
+                            <div class="flip-card-back"><p>Kabilang dito ang neolohismo, hiram-salin, at pagbibigay ng bagonghulog sa lumang salita.</p><span class="translation-sub mt-2">New terms can enrich the language.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Idyoma</span><span class="translation-sub">Context matters</span></div>
+                            <div class="flip-card-back"><p>Hindi literal ang salin ng idyoma. Halimbawa, "Break a leg" ay "Galingan mo!"</p><span class="translation-sub mt-2">Idioms need contextual translation.</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <h3 class="text-xl font-bold border-b pb-2">Tatlong Pangunahing Hakbang</h3>
+                    <p class="translation-sub mb-4">Three main steps in actual translation</p>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                            <h4 class="font-bold text-slate-700">1. Pagtutumbas</h4>
+                            <p class="text-sm text-gray-700 mt-2">Paghahanap sa korpus ng Filipino at sa ibang katutubong wika tulad ng rabaw, lawas, at ilahas.</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <h4 class="font-bold text-blue-700">2. Panghihiram</h4>
+                            <p class="text-sm text-gray-700 mt-2">Pagkuha mula Español o Ingles kapag walang angkop na katutubong tumbas.</p>
+                        </div>
+                        <div class="p-4 bg-violet-50 rounded-lg border border-violet-100">
+                            <h4 class="font-bold text-violet-700">3. Paglikha</h4>
+                            <p class="text-sm text-gray-700 mt-2">Pagbuo ng bagong salita sa pamamagitan ng neolohismo, hiram-salin, o bagonghulog.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="principles" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Yugto, Gabay, at Answer Key</h2>
+                    <span class="translation-sub pb-1">Stages, Guide, and Practice Key</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-slate-100">
+                        <h3 class="font-bold text-slate-700 flex items-center gap-2"><i class="fa-solid fa-list-ol"></i> Apat na Yugto ng Pagsasalin</h3>
+                        <p class="translation-sub mb-4">Baga-an, 2018</p>
+                        <ol class="space-y-3 text-sm text-gray-700">
+                            <li><strong>1. Preliminaryong Gawain:</strong> Paghahanda at pagsusuri sa tekstong isasalin.</li>
+                            <li><strong>2. Aktwal na Pagsasalin:</strong> Pagbuo ng initial draft at pagsasaayos ng unang burador.</li>
+                            <li><strong>3. Pagpapasuri:</strong> Pagpapakita ng salin sa dalubhasa o eksperto.</li>
+                            <li><strong>4. Re-writing:</strong> Muling pagsulat ng pinal na teksto batay sa mungkahi.</li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-red-100">
+                        <h3 class="font-bold text-red-700 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Gabay sa Idyoma at Konteksto</h3>
+                        <p class="translation-sub mb-4">Gawin Natin</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="p-3 bg-red-50 rounded-lg"><strong>Mali:</strong> Break a leg -> Putulin ang paa.<br><strong>Tama:</strong> Break a leg -> Galingan mo! o Good luck!</div>
+                            <div class="p-3 bg-red-50 rounded-lg"><strong>Mali:</strong> How do you do? -> Ano ang ginagawa mo?<br><strong>Tama:</strong> How do you do? -> Kumusta ka?</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-blue-100">
+                        <h3 class="font-bold text-blue-700 flex items-center gap-2"><i class="fa-solid fa-right-left"></i> Panghihiram</h3>
+                        <p class="translation-sub mb-4">Borrowing priorities</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="p-3 bg-blue-50 rounded-lg"><strong>Español:</strong> Unang prayoridad dahil sa kasaysayan. Hal. ventana -> bintana; campana -> kampana.</div>
+                            <div class="p-3 bg-blue-50 rounded-lg"><strong>Ingles Yugto 1:</strong> Walang pagbabago sa baybay. Hal. laptop.</div>
+                            <div class="p-3 bg-blue-50 rounded-lg"><strong>Ingles Yugto 2:</strong> Pag-reispel o pagbabago ng baybay. Hal. computer -> kompyuter.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-violet-100">
+                        <h3 class="font-bold text-violet-700 flex items-center gap-2"><i class="fa-solid fa-seedling"></i> Paglikha</h3>
+                        <p class="translation-sub mb-4">Ways to enrich vocabulary</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="p-3 bg-violet-50 rounded-lg"><strong>Neolohismo:</strong> Banyuhay para sa metamorphosis.</div>
+                            <div class="p-3 bg-violet-50 rounded-lg"><strong>Hiram-salin:</strong> Railway -> daambakal; test tube -> subukang-tubo.</div>
+                            <div class="p-3 bg-violet-50 rounded-lg"><strong>Bagonghulog:</strong> Agham para sa science; kawani para sa employee.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-emerald-100">
+                    <h3 class="font-bold text-emerald-700 flex items-center gap-2"><i class="fa-solid fa-key"></i> Subukang Isalin: Answer Key</h3>
+                    <p class="translation-sub mb-4">Suggested translations and methods</p>
+                    <div class="grid md:grid-cols-2 gap-3 text-sm text-gray-700">
+                        <div class="p-3 bg-emerald-50 rounded-lg"><strong>I bought a new laptop.</strong><br>Bumili ako ng bagong laptop. <span class="italic">(Panghihiram)</span></div>
+                        <div class="p-3 bg-emerald-50 rounded-lg"><strong>He is a well-known writer.</strong><br>Siya ay isang tanyag na manunulat. <span class="italic">(Pagtutumbas)</span></div>
+                        <div class="p-3 bg-emerald-50 rounded-lg"><strong>Why don't you give him a hand?</strong><br>Bakit hindi mo siya tulungan? <span class="italic">(Idyomatiko)</span></div>
+                        <div class="p-3 bg-emerald-50 rounded-lg"><strong>Who would have thought that we would surpass all these things?</strong><br>Sino ang mag-aakalang malalampasan natin ang lahat ng ito? <span class="italic">(Malaya)</span></div>
+                        <div class="p-3 bg-emerald-50 rounded-lg md:col-span-2"><strong>Chemistry and Math are really challenging yet my favorite subjects.</strong><br>Tunay na mahirap ang Kimika at Matematika ngunit ang mga ito ang paborito kong asignatura. <span class="italic">(Teknikal/Akademiko)</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="quiz" class="topic-section hidden max-w-2xl mx-auto">
+                <div data-quiz-container class="bg-white p-8 rounded-2xl shadow-lg border">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col">
+                            <span data-quiz-progress class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tanong 1/5</span>
+                            <span class="translation-sub">Question</span>
+                        </div>
+                        <span data-quiz-score class="text-blue-600 font-bold">Score: 0</span>
+                    </div>
+                    <h3 data-quiz-question class="text-xl font-bold text-gray-800 mb-6 leading-tight"></h3>
+                    <div data-quiz-options class="space-y-3"></div>
+                    <div data-quiz-feedback class="mt-6 p-4 rounded-lg hidden"></div>
+                    <button onclick="nextQuestion()" data-next-btn class="mt-8 w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition hidden">
+                        Susunod na Tanong <br><span class="text-[10px] font-normal italic">Next Question</span>
+                    </button>
+                </div>
+                <div data-result-container class="bg-white p-12 rounded-2xl shadow-lg border text-center hidden">
+                    <div class="text-6xl mb-4 text-amber-400"><i class="fa-solid fa-trophy"></i></div>
+                    <h2 class="text-3xl font-bold mb-2">Tapos na!</h2>
+                    <p class="translation-sub text-base mb-2">Finished!</p>
+                    <p data-final-score class="text-xl text-gray-600 mb-8"></p>
+                    <button onclick="resetQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                        Ulitin ang Pagsusulit <br><span class="text-[10px] font-normal italic">Restart Quiz</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div id="principlesTopic-topic" class="topic-page hidden">
+            <section data-section="home" class="topic-section space-y-8">
+                <div class="bg-rose-600 rounded-2xl p-8 text-white shadow-xl">
+                    <h2 class="text-3xl font-bold mb-2">Mga Simulain sa Pagsasalin</h2>
+                    <p class="italic text-xs opacity-80 mb-2">Principles of Translation</p>
+                    <p class="text-rose-100 max-w-2xl">Balikan ang kalikasan ng pagsasalin, mga simulain nina Bernales et al., karagdagang paalala, at mabilis na tips para sa pagsusulit.</p>
+                    <div class="mt-6 flex flex-wrap gap-4">
+                        <button onclick="showSection('concepts')" class="bg-white text-rose-600 px-6 py-2 rounded-lg font-semibold hover:bg-rose-50 transition">
+                            Magsimula <br><span class="text-[10px] italic">Get Started</span>
+                        </button>
+                        <button onclick="showSection('quiz')" class="bg-rose-500 text-white border border-rose-400 px-6 py-2 rounded-lg font-semibold hover:bg-rose-400 transition">
+                            Mag-Quiz <br><span class="text-[10px] italic">Take Quiz</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-link"></i></div>
+                        <h3 class="font-bold text-lg">Nakatali sa Diwa</h3>
+                        <p class="translation-sub mb-2">Bound to meaning</p>
+                        <p class="text-gray-600 text-sm">Hindi simpleng palitan ng salita; dapat manatili ang orihinal na diwa.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-users"></i></div>
+                        <h3 class="font-bold text-lg">Target na Mambabasa</h3>
+                        <p class="translation-sub mb-2">Target readers</p>
+                        <p class="text-gray-600 text-sm">Mabuti ang salin kung madaling maunawaan ng pangkat na gagamit nito.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl shadow-sm">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-leaf"></i></div>
+                        <h3 class="font-bold text-lg">Natural na Daloy</h3>
+                        <p class="translation-sub mb-2">Natural flow</p>
+                        <p class="text-gray-600 text-sm">Ang kahulugan ng orihinal ay dapat natural sa tunguhang wika.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="concepts" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Kalikasan at Pangunahing Simulain</h2>
+                    <span class="translation-sub pb-1">Nature and Key Principles</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Ugat sa Kultura</span><span class="translation-sub">Culture-based</span></div>
+                            <div class="flip-card-back"><p>Ang wika ay bahagi ng kultura. Ang "black sheep" ay pasaway, hindi itim na tupa.</p><span class="translation-sub mt-2">Avoid literal translation of idioms.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Kakanyahan</span><span class="translation-sub">Language uniqueness</span></div>
+                            <div class="flip-card-back"><p>Magkaiba ang istruktura ng Ingles at Filipino, kabilang ang ayos at gamit ng panlapi.</p><span class="translation-sub mt-2">Each language has its own structure.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Hindi Paglilipat</span><span class="translation-sub">No forced structure</span></div>
+                            <div class="flip-card-back"><p>Huwag ipilit ang ayos ng Ingles. "Kind is our teacher" ay mali; "Mabait ang aming guro" ang tama.</p><span class="translation-sub mt-2">Use natural Filipino syntax.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Pagtitipid</span><span class="translation-sub">Brevity</span></div>
+                            <div class="flip-card-back"><p>Mas mabuti ang maikli ngunit malinaw: "Please be seated" -> "Maupo na kayo."</p><span class="translation-sub mt-2">Clear and short is often better.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Konteksto</span><span class="translation-sub">Context</span></div>
+                            <div class="flip-card-back"><p>Nagbabago ang kahulugan ayon sa kasama nitong salita: light bag ay magaan, light color ay mapusyaw.</p><span class="translation-sub mt-2">Meaning depends on surrounding words.</span></div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border"><span class="font-bold text-gray-700 text-lg">Simbolo</span><span class="translation-sub">Established symbols</span></div>
+                            <div class="flip-card-back"><p>Ang 37°C, H2O, DepEd, at iba pang establisadong simbolo o akronim ay hindi na isinasalin.</p><span class="translation-sub mt-2">Universal forms usually stay as they are.</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="principles" class="topic-section hidden space-y-6">
+                <div class="flex items-end gap-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Mga Simulain, Paalala, at Tips</h2>
+                    <span class="translation-sub pb-1">Principles, Reminders, and Tips</span>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-rose-100">
+                    <h3 class="font-bold text-rose-700 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> 11 Simulain sa Pagsasalin</h3>
+                    <p class="translation-sub mb-4">Bernales et al.</p>
+                    <div class="grid md:grid-cols-2 gap-3 text-sm text-gray-700">
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>1. Ugat sa Kultura:</strong> Black sheep -> pasaway.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>2. Natatanging Kakanyahan:</strong> Pumili ng tamang ayos at panlapi.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>3. Hindi Paglilipat ng Estruktura:</strong> Gamitin ang natural na ayos ng Filipino.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>4. Target na Mambabasa:</strong> Iangkop sa gagamit ng salin.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>5. Antas ng Wika:</strong> Tukuyin kung pormal o impormal.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>6. Establisadong Simbolo:</strong> Huwag isalin ang 37°C, H2O, DepEd.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>7. Maramihang Panumbas:</strong> Pumili ng isa at ilagay ang iba sa talababa.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>8. Pagtitipid:</strong> Mas mainam ang maikli ngunit malinaw.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>9. Konteksto:</strong> Light bag vs light color.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg"><strong>10. Kaisahan ng Hiram:</strong> Panatilihin ang iisang anyo ng teknikal na hiram.</div>
+                        <div class="p-3 bg-rose-50 rounded-lg md:col-span-2"><strong>11. Gamit ng Diksyunaryo:</strong> Huwag paalipin sa diksyunaryo; gamitin ang context clues.</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-amber-100">
+                        <h3 class="font-bold text-amber-700 flex items-center gap-2"><i class="fa-solid fa-bell"></i> Karagdagang Paalala</h3>
+                        <p class="translation-sub mb-4">Extra reminders</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="p-3 bg-amber-50 rounded-lg"><strong>False Friends:</strong> Iwasan ang salitang magkatunog ngunit iba ang kahulugan sa rehiyon.</div>
+                            <div class="p-3 bg-amber-50 rounded-lg"><strong>Pamagat:</strong> "Face Off" ay mas natural na "Tapatan" kaysa "Tanggal Mukha."</div>
+                            <div class="p-3 bg-amber-50 rounded-lg"><strong>Kalinawan:</strong> "Basa ng tubig ang kaniyang papel" kung tubig ang ibig sabihin.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-emerald-100">
+                        <h3 class="font-bold text-emerald-700 flex items-center gap-2"><i class="fa-solid fa-bolt"></i> Mabilis na Tip sa Pagsusulit</h3>
+                        <p class="translation-sub mb-4">Quick exam tips</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="p-3 bg-emerald-50 rounded-lg">Kapag kg, cm, °C, H2O, o DepEd ang usapan, isipin ang establisadong simbolo o daglat.</div>
+                            <div class="p-3 bg-emerald-50 rounded-lg">Kapag "itim na tupa" o "magaan na bag," isipin ang kultura o konteksto.</div>
+                            <div class="p-3 bg-emerald-50 rounded-lg">Laging piliin ang pinakanatural pakinggan sa tenga ng Pilipino.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-blue-100">
+                    <h3 class="font-bold text-blue-700 flex items-center gap-2"><i class="fa-solid fa-key"></i> Paglalapat: Susi sa Pagwawasto</h3>
+                    <p class="translation-sub mb-4">Application answer key</p>
+                    <div class="grid md:grid-cols-2 gap-3 text-sm text-gray-700">
+                        <div class="p-3 bg-blue-50 rounded-lg"><strong>She passed the exam with flying colors.</strong><br>Pinakaangkop ang hindi literal na salin. Ang "flying colors" ay napakagaling na resulta.</div>
+                        <div class="p-3 bg-blue-50 rounded-lg"><strong>Tell them to keep quiet.</strong><br>"Patahimikin sila." Simulain: pagtitipid ng mga salita.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section data-section="quiz" class="topic-section hidden max-w-2xl mx-auto">
+                <div data-quiz-container class="bg-white p-8 rounded-2xl shadow-lg border">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col">
+                            <span data-quiz-progress class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tanong 1/5</span>
+                            <span class="translation-sub">Question</span>
+                        </div>
+                        <span data-quiz-score class="text-blue-600 font-bold">Score: 0</span>
+                    </div>
+                    <h3 data-quiz-question class="text-xl font-bold text-gray-800 mb-6 leading-tight"></h3>
+                    <div data-quiz-options class="space-y-3"></div>
+                    <div data-quiz-feedback class="mt-6 p-4 rounded-lg hidden"></div>
+                    <button onclick="nextQuestion()" data-next-btn class="mt-8 w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition hidden">
+                        Susunod na Tanong <br><span class="text-[10px] font-normal italic">Next Question</span>
+                    </button>
+                </div>
+                <div data-result-container class="bg-white p-12 rounded-2xl shadow-lg border text-center hidden">
+                    <div class="text-6xl mb-4 text-amber-400"><i class="fa-solid fa-trophy"></i></div>
+                    <h2 class="text-3xl font-bold mb-2">Tapos na!</h2>
+                    <p class="translation-sub text-base mb-2">Finished!</p>
+                    <p data-final-score class="text-xl text-gray-600 mb-8"></p>
+                    <button onclick="resetQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                        Ulitin ang Pagsusulit <br><span class="text-[10px] font-normal italic">Restart Quiz</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const topics = ['basic', 'approaches', 'practice', 'process', 'principlesTopic'];
+        const sections = ['home', 'concepts', 'principles', 'quiz'];
+        const quizzes = {
+            basic: [
+                { q: "Ano ang tawag sa orihinal na wikang isinasalin?", o: ["Tunguhing Wika", "Simulaing Wika", "Likas na Wika", "Kultural na Wika"], a: 1, e: "Ang Simulaing Wika o Source Language (SL) ang orihinal na teksto." },
+                { q: "Ayon sa kanya, ang pagsasalin ay paglilipat ng pinakamalapit na natural na katumbas ng orihinal.", o: ["C. Rabin", "Virgilio Almario", "Eugene Nida", "Jose Rizal"], a: 2, e: "Si Eugene Nida ang nagbigay-diin sa pinakamalapit na natural na katumbas." },
+                { q: "Dapat bang isalin ang mga pormulang siyentipiko tulad ng H2O?", o: ["Oo, para mas maintindihan", "Hindi, dahil ito ay establisado na", "Depende sa guro", "Maaari kung gusto ng tagasalin"], a: 1, e: "Ang mga establisadong daglat at pormula ay hindi na isinasalin." },
+                { q: "Anong lebel ng pagsasalin ang tumutukoy sa literal na paglilipat ng teksto?", o: ["Natural", "Kohesiyon", "Reperensyal", "Tekstuwal"], a: 3, e: "Ang Tekstuwal na lebel ay ang literal na pagsasalin." },
+                { q: "Anong hakbang ang ginagawa upang mapuna ng iba ang mga pagkakamali o pagkukulang ng salin?", o: ["Muling Pormulasyon", "Panimulang Pagsusuri", "Pagrerepaso at Paghahambing", "Pagsusuri ng Salin"], a: 2, e: "Ipinapabasa sa iba ang salin sa huling bahagi upang maperpekto ito." }
+            ],
+            approaches: [
+                { q: "Ayon kay Italo Calvino, ano ang mahalagang papel ng tagasalin?", o: ["Magpaikli ng nobela", "Ipakilala ang manunulat sa buong mundo", "Palitan ang estilo ng awtor", "Gumawa ng sariling bersyon lamang"], a: 1, e: "Para kay Calvino, ang tagasalin ay alyado upang makalampas ang akda sa hangganan ng bansa." },
+                { q: "Aling uri ng pagsasalin ang tuwiran, tiyak, at madalas monosemic ang termino?", o: ["Pampanitikan", "Teknikal", "Idyomatiko", "Adaptasyon"], a: 1, e: "Teknikal na pagsasalin ang gumagamit ng espesyalisado at eksaktong wika." },
+                { q: "Ano ang estratehiyang gumagamit ng mas pangkalahatang salita?", o: ["General Word", "Omission", "Illustration", "Cultural Substitution"], a: 0, e: "General Word o superordinate ang paggamit ng mas malawak na katawagan." },
+                { q: "Aling metodo ang pinakamalayang anyo at madalas gamitin sa awit, tula, at dula?", o: ["Literal", "Matapat", "Adaptasyon", "Semantiko"], a: 2, e: "Adaptasyon ang pinakamalayang metodo at karaniwang ginagamit sa malikhaing akda." },
+                { q: "Ano ang halimbawa ng pagsasaling pa-idyomatiko?", o: ["cocina -> kusina", "abstract -> abstrak", "bread and butter -> hanapbuhay", "cake -> cake"], a: 2, e: "Ang bread and butter -> hanapbuhay ay pagsasaling pa-idyomatiko." }
+            ],
+            practice: [
+                { q: "Ano ang pangunahing layon ng pagsasalin?", o: ["Pagpapahaba ng teksto", "Mabisang pagpapahatid ng mensahe", "Pagpapalit ng lahat ng salita", "Pag-iwas sa hiram na salita"], a: 1, e: "Komunikasyon ang pangunahing layon: malinaw at mabisa dapat maihatid ang mensahe." },
+                { q: "Aling uri ng pagsasalin ang ginagamit sa balita, batas, medisina, at akademikong teksto?", o: ["Pampanitikan", "Siyentipiko/Teknikal", "Adaptasyon", "Malayang salin"], a: 1, e: "Pagsasaling Siyentipiko/Teknikal ang para sa impormatibong teksto na may espesyalisadong wika." },
+                { q: "Ano ang tawag sa direktang paggamit ng salita mula sa ibang wika?", o: ["Saling-angkat", "Saling-taal", "Saling-tapat", "Saling-sanib"], a: 0, e: "Saling-angkat o direct borrowing ang direktang paggamit ng salita mula sa ibang wika." },
+                { q: "Ano ang katumbas ng Biology sa talasalitaang teknikal?", o: ["Sihay", "Haynayan", "Kagaw", "Kaphay"], a: 1, e: "Haynayan ang espesyalisadong salin para sa Biology." },
+                { q: "Aling pamamaraan ang paghahanap ng katutubong katumbas na akma sa kultura at kaisipang Pilipino?", o: ["Saling-daglat", "Saling-paimbabaw", "Saling-tapat", "Saling-likha"], a: 2, e: "Saling-tapat ang paghahanap ng katutubong katumbas na akma sa kultura." }
+            ],
+            process: [
+                { q: "Ayon kay Almario, ano ang pagsasalin?", o: ["Simpleng pagpapalit ng salita", "Paghahanap ng pinakaangkop na pantumbas", "Pag-alis ng mahihirap na salita", "Pagkopya ng estruktura ng Ingles"], a: 1, e: "Para kay Almario, ang pagsasalin ay paghahanap ng pinakaangkop na pantumbas, hindi simpleng palitan ng salita." },
+                { q: "Ano ang unang dapat gawin bago magpasyang manghiram?", o: ["Paglikha", "Pagre-reispel", "Pagtutumbas", "Re-writing"], a: 2, e: "Pagtutumbas muna ang ginagawa upang maiwasan ang labis na panghihiram." },
+                { q: "Aling wika ang unang prayoridad sa panghihiram dahil sa kasaysayan?", o: ["Ingles", "Español", "Hiligaynon", "Ilokano"], a: 1, e: "Español ang unang prayoridad sa panghihiram dahil sa kasaysayan ng Filipino." },
+                { q: "Ano ang halimbawa ng hiram-salin o calquing?", o: ["Laptop", "Kompyuter", "Daambakal", "Agham"], a: 2, e: "Daambakal mula sa railway ay hiram-salin dahil literal na isinalin ang mga bahagi ng salita." },
+                { q: "Ano ang tamang salin ng idyomang 'Break a leg' ayon sa gabay?", o: ["Putulin ang paa", "Baliin ang binti", "Galingan mo", "Lumakad ka"], a: 2, e: "Ang idyoma ay hindi dapat literal: 'Break a leg' ay 'Galingan mo!' o 'Good luck!'" }
+            ],
+            principlesTopic: [
+                { q: "Ano ang pangunahing tunguhin ng mabuting salin?", o: ["Maging mas mahaba kaysa orihinal", "Taglayin ang diwa ng orihinal at maging natural sa tunguhang wika", "Isalin ang bawat salita nang literal", "Gamitin lamang ang diksyunaryo"], a: 1, e: "Ang salin ay dapat magtaglay ng diwa at kahulugan ng orihinal habang natural ang daloy sa tunguhang wika." },
+                { q: "Ano ang mas angkop na salin ng 'black sheep'?", o: ["Itim na tupa", "Maitim na hayop", "Pasaway", "Tupa sa bukid"], a: 2, e: "Dahil idyoma ito, kultura at kahulugan ang isinasalin: 'pasaway,' hindi literal na 'itim na tupa.'" },
+                { q: "Aling simulain ang tinutukoy ng H2O, 37°C, at DepEd?", o: ["Pagtitipid ng salita", "Establisadong simbolo", "False friends", "Maramihang panumbas"], a: 1, e: "Ang mga establisadong simbolo, akronim, at pormula ay hindi na isinasalin." },
+                { q: "Ano ang ipinapakita ng 'light bag' at 'light color'?", o: ["Antas ng wika", "Konteksto ng salita", "Pamagat", "Kaisahan ng hiram na salita"], a: 1, e: "Nagbabago ang kahulugan ng salita batay sa kasama nitong mga salita: magaan na bag, mapusyaw na kulay." },
+                { q: "Anong simulain ang makikita sa 'Tell them to keep quiet' -> 'Patahimikin sila'?", o: ["Pagtitipid ng salita", "Ugat sa kultura", "Establisadong simbolo", "Gamit ng diksyunaryo"], a: 0, e: "Ito ay pagtitipid ng salita: maikli, malinaw, at natural ang salin." }
+            ]
+        };
+
+        let activeTopic = 'basic';
+        let activeSection = 'home';
+        let currentQuestion = 0;
+        let score = 0;
+
+        function getActiveTopicElement() {
+            return document.getElementById(`${activeTopic}-topic`);
+        }
+
+        function switchTopic(topicId) {
+            activeTopic = topicId;
+            currentQuestion = 0;
+            score = 0;
+
+            topics.forEach(topic => {
+                document.getElementById(`${topic}-topic`).classList.toggle('hidden', topic !== topicId);
+                document.getElementById(`${topic}-topic-btn`).classList.toggle('active', topic === topicId);
+            });
+
+            showSection('home');
+        }
+
+        function showSection(sectionId) {
+            activeSection = sectionId;
+            const topicElement = getActiveTopicElement();
+
+            topicElement.querySelectorAll('.topic-section').forEach(section => {
+                section.classList.toggle('hidden', section.dataset.section !== sectionId);
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.toggle('active', link.getAttribute('onclick').includes(`'${sectionId}'`));
+            });
+
+            window.scrollTo(0, 0);
+            if (sectionId === 'quiz') resetQuiz();
+        }
+
+        function loadQuestion() {
+            const topicElement = getActiveTopicElement();
+            const quizData = quizzes[activeTopic];
+            const data = quizData[currentQuestion];
+
+            topicElement.querySelector('[data-quiz-progress]').innerText = `Tanong ${currentQuestion + 1}/${quizData.length}`;
+            topicElement.querySelector('[data-quiz-question]').innerText = data.q;
+            topicElement.querySelector('[data-quiz-score]').innerText = `Score: ${score}`;
+
+            const optionsContainer = topicElement.querySelector('[data-quiz-options]');
+            optionsContainer.innerHTML = '';
+
+            data.o.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-gray-100 transition flex justify-between items-center gap-3";
+                btn.innerHTML = `<span>${opt}</span><i class="fa-solid fa-chevron-right text-gray-300"></i>`;
+                btn.onclick = () => checkAnswer(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            topicElement.querySelector('[data-quiz-feedback]').classList.add('hidden');
+            topicElement.querySelector('[data-next-btn]').classList.add('hidden');
+        }
+
+        function checkAnswer(idx) {
+            const topicElement = getActiveTopicElement();
+            const data = quizzes[activeTopic][currentQuestion];
+            const feedback = topicElement.querySelector('[data-quiz-feedback]');
+            const options = topicElement.querySelectorAll('.quiz-option');
+
+            options.forEach(opt => opt.onclick = null);
+
+            if (idx === data.a) {
+                score++;
+                options[idx].classList.replace('border-gray-100', 'border-green-500');
+                options[idx].classList.add('bg-green-50');
+                feedback.innerHTML = `<p class="text-green-700 font-bold">Tama! <span class="text-xs font-normal italic">(Correct!)</span></p><p class="text-green-600 text-sm">${data.e}</p>`;
+                feedback.className = "mt-6 p-4 rounded-lg bg-green-50 border border-green-100";
+            } else {
+                options[idx].classList.replace('border-gray-100', 'border-red-500');
+                options[idx].classList.add('bg-red-50');
+                options[data.a].classList.replace('border-gray-100', 'border-green-500');
+                options[data.a].classList.add('bg-green-50');
+                feedback.innerHTML = `<p class="text-red-700 font-bold">Mali! <span class="text-xs font-normal italic">(Wrong!)</span></p><p class="text-red-600 text-sm">${data.e}</p>`;
+                feedback.className = "mt-6 p-4 rounded-lg bg-red-50 border border-red-100";
+            }
+
+            feedback.classList.remove('hidden');
+            topicElement.querySelector('[data-next-btn]').classList.remove('hidden');
+            topicElement.querySelector('[data-quiz-score]').innerText = `Score: ${score}`;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizzes[activeTopic].length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const topicElement = getActiveTopicElement();
+            topicElement.querySelector('[data-quiz-container]').classList.add('hidden');
+            topicElement.querySelector('[data-result-container]').classList.remove('hidden');
+            topicElement.querySelector('[data-final-score]').innerText = `Nakuha mo ang ${score}/${quizzes[activeTopic].length} na puntos.`;
+        }
+
+        function resetQuiz() {
+            const topicElement = getActiveTopicElement();
+            currentQuestion = 0;
+            score = 0;
+            topicElement.querySelector('[data-quiz-container]').classList.remove('hidden');
+            topicElement.querySelector('[data-result-container]').classList.add('hidden');
+            loadQuestion();
+        }
+
+        function toggleMobileMenu() {
+            const nav = document.querySelector('nav');
+            nav.classList.toggle('hidden');
+            nav.classList.toggle('flex');
+            nav.classList.toggle('flex-col');
+            nav.classList.toggle('absolute');
+            nav.classList.toggle('top-16');
+            nav.classList.toggle('left-0');
+            nav.classList.toggle('w-full');
+            nav.classList.toggle('bg-white');
+            nav.classList.toggle('p-4');
+            nav.classList.toggle('border-b');
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
